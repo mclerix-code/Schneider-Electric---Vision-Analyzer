@@ -1,0 +1,5 @@
+{
+  "name": "Schneider Electric Vision Analyzer",
+  "description": "Advanced image and diagram interpretation tool for Schneider Electric.",
+  "requestFramePermissions": []
+}
