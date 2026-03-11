@@ -26,6 +26,10 @@ COPY --from=builder /app/dist /usr/share/nginx/html
 # and outputs them to /etc/nginx/conf.d/
 COPY nginx.conf.template /etc/nginx/templates/default.conf.template
 
+# Copy the entrypoint script
+COPY entrypoint.sh /docker-entrypoint.d/99-inject-env.sh
+RUN chmod +x /docker-entrypoint.d/99-inject-env.sh
+
 # Cloud Run provides the PORT environment variable
 ENV PORT=8080
 

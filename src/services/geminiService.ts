@@ -1,6 +1,17 @@
 import { GoogleGenAI, ThinkingLevel } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+let ai: GoogleGenAI | null = null;
+
+function getAIClient() {
+  if (!ai) {
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey || apiKey === '__GEMINI_API_KEY_PLACEHOLDER__') {
+      throw new Error("GEMINI_API_KEY is missing. Please ensure it is set in your Cloud Run environment variables.");
+    }
+    ai = new GoogleGenAI({ apiKey });
+  }
+  return ai;
+}
 
 export async function analyzeImage(
   fileData: string,
@@ -11,6 +22,7 @@ export async function analyzeImage(
   useCodeExecution: boolean = false
 ) {
   try {
+    const client = getAIClient();
     const config: any = {};
     if (useAgenticVision) {
       config.thinkingConfig = { thinkingLevel: ThinkingLevel.HIGH };
@@ -20,7 +32,7 @@ export async function analyzeImage(
       config.tools = [{ codeExecution: {} }];
     }
 
-    const response = await ai.models.generateContent({
+    const response = await client.models.generateContent({
       model,
       contents: {
         parts: [
