@@ -4,7 +4,8 @@ let ai: GoogleGenAI | null = null;
 
 function getAIClient() {
   if (!ai) {
-    const apiKey = process.env.GEMINI_API_KEY;
+    // Check window.ENV first (injected at runtime in Cloud Run), fallback to process.env (local dev)
+    const apiKey = (window as any).ENV?.GEMINI_API_KEY || process.env.GEMINI_API_KEY;
     if (!apiKey || apiKey === '__GEMINI_API_KEY_PLACEHOLDER__') {
       throw new Error("GEMINI_API_KEY is missing. Please ensure it is set in your Cloud Run environment variables.");
     }
